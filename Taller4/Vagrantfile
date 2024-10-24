@@ -1,13 +1,31 @@
 Vagrant.configure("2") do |config|
 
+    # Configuración para nodo1
     config.vm.define :nodo1 do |nodo1|
       nodo1.vm.box = "debian/bookworm64"
       nodo1.vm.hostname = "nodo1"
       nodo1.vm.synced_folder ".", "/vagrant", disabled: true
+
+      # Cambiar la dirección IP estática para evitar conflictos
+      nodo1.vm.network "private_network", ip: "10.0.0.1"
     end
+
+    # Configuración para nodo2
     config.vm.define :nodo2 do |nodo2|
       nodo2.vm.box = "generic/ubuntu2204"
       nodo2.vm.hostname = "nodo2"
       nodo2.vm.synced_folder ".", "/vagrant", disabled: true
+
+      # Añadir una red interna con IP estática
+      nodo2.vm.network "private_network", ip: "10.0.0.2"
+
+      # Añadir una nueva interfaz de red conectada a la red pública usando el bridge br0
+      nodo2.vm.network "public_network", bridge: "br0", auto_config: true, dev: "br0"
+
+      # Añadir dos nuevos discos de 1 GB
+      nodo2.vm.provider "libvirt" do |libvirt|
+        libvirt.storage :file, :size => '1G', :type => 'qcow2', :name => 'disk1.qcow2'
+        libvirt.storage :file, :size => '1G', :type => 'qcow2', :name => 'disk2.qcow2'
+      end
     end
-  end
+end
