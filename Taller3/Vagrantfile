@@ -3,7 +3,7 @@
     config.vm.hostname="prueba"
     config.vm.synced_folder ".", "/vagrant", disabled: true
     config.vm.provider :libvirt do |libvirt|
-      libvirt.memory = 1024
-      libvirt.cpus = 2
+      libvirt.memory = 2048
+      libvirt.cpus = 4
     end
   end
